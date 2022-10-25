@@ -5,7 +5,6 @@ import com.example.productcategoryservice.entity.Product;
 import com.example.productcategoryservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
