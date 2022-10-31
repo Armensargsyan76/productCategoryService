@@ -6,6 +6,7 @@ import com.example.productcategoryservice.entity.Product;
 import com.example.productcategoryservice.mapper.ProductMapper;
 import com.example.productcategoryservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductEndpoint {
     private final ProductService productService;
     private final ProductMapper productMapper;
@@ -38,18 +39,19 @@ public class ProductEndpoint {
 
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductRequestDto productRequestDto) {
-        Product product = productMapper.map(productRequestDto);
-        productService.save(product);
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(productService.save(productRequestDto));
     }
 
-    @PutMapping
-    public ResponseEntity<ProductResponseDto> updateProduct(@RequestBody ProductRequestDto productRequestDto) {
-        Optional<Product> byOptional = productService.updateProduct(productMapper.map(productRequestDto));
-        if (byOptional.isEmpty()) {
+    @PutMapping("{id}")
+    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable int id, @RequestBody ProductRequestDto productRequestDto) {
+        Product product = productMapper.map(productRequestDto);
+        if (product == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(productMapper.map(byOptional.get()));
+        if (productService.isUpdateProduct(productRequestDto)) {
+            return ResponseEntity.ok(productMapper.map(productService.updateProduct(product, id)));
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @DeleteMapping("{id}")
@@ -58,8 +60,10 @@ public class ProductEndpoint {
         if (byOptional.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        productService.deleteProductById(id);
-        return ResponseEntity.noContent().build();
+        if (productService.deleteProductById(byOptional.get())) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/by/category/{id}")

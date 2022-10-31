@@ -14,5 +14,6 @@ public class ProductRequestDto {
     private int count;
     private double price;
     private Category category;
+    private UserProductDetailDto userProductDetailDto;
 
 }

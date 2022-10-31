@@ -3,3 +3,11 @@ spring:
     url: jdbc:mysql://localhost:3306/product_category
     username: root
     password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: bu1y&g13#$$%WG!
+  expiration: 330000
