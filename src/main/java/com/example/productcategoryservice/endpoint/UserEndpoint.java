@@ -29,7 +29,7 @@ public class UserEndpoint {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         userService.registerUser(user);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userMapper.map(user));
     }
 
     @PostMapping("/login")
